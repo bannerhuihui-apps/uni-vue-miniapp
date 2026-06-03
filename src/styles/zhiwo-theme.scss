@@ -1,0 +1,97 @@
+/** 对齐 zhiwo/styles/code-theme.wxss；
+ * page 单独块：微信小程序 WXSS 中若写 `page,:root`，整条规则可能被丢弃，变量全失效；
+ * :root 单独块：供 H5。两处内容须保持一致。
+ */
+@mixin qy-theme-vars {
+  --qy-primary: #4b79d8;
+  --qy-mint: rgba(198, 240, 219, 0.92);
+  --qy-lemon: rgba(255, 245, 206, 0.95);
+  --qy-text: rgba(0, 0, 0, 0.85);
+  --qy-text-mute: rgba(0, 0, 0, 0.55);
+  --qy-card-stroke: rgba(255, 255, 255, 0.9);
+  --qy-link: rgba(129, 124, 124, 0.9);
+  --qy-link-strong: rgba(129, 124, 124, 0.95);
+  --qy-page-tint: #f7f2df;
+  --qy-today-red: #d32f2f;
+  --qy-dim-ie-0: #d8243f;
+  --qy-dim-ie-1: #3d62b6;
+  --qy-dim-sn-0: #7b39b2;
+  --qy-dim-sn-1: #efb076;
+  --qy-dim-tf-0: #f5bb13;
+  --qy-dim-tf-1: #1480d8;
+  --qy-dim-jp-0: #2a9e9a;
+  --qy-dim-jp-1: #d06d10;
+  --qy-chip-same: #477a61;
+  --qy-chip-diff: #a35d3a;
+  --qy-home-grad-0: #f6cdd3;
+  --qy-home-grad-1: #cfeee2;
+  --qy-home-grad-2: #f7f2df;
+  /** 列表 / 浮动卡片共用：体积小、偏弱、色相暖，减轻发黑大块阴影 */
+  --qy-card-shadow: 0 6rpx 20rpx rgba(58, 50, 40, 0.06),
+    0 2rpx 8rpx rgba(58, 50, 40, 0.035);
+  /** 弹层等略需抬升的容器 */
+  --qy-card-shadow-modal: 0 12rpx 32rpx rgba(44, 38, 32, 0.1),
+    0 4rpx 12rpx rgba(44, 38, 32, 0.055);
+}
+
+page {
+  @include qy-theme-vars;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* 微信小程序 page 外层容器需占满，否则子节点 height:100% 会撑出页面滚动 */
+/* #ifdef MP-WEIXIN */
+uni-page-body {
+  height: 100%;
+  overflow: hidden;
+}
+/* #endif */
+
+:root {
+  @include qy-theme-vars;
+}
+
+/** 与原 zhiwo/app.wxss：引圆体 + 系统栈回落（小程序须在 App.vue 调用 uni.loadFontFace 注册字形） */
+$qy-font-stack:
+  "QingningRounded",
+  -apple-system,
+  BlinkMacSystemFont,
+  "PingFang SC",
+  "Helvetica Neue",
+  Helvetica,
+  Arial,
+  sans-serif;
+
+page,
+view,
+text,
+button,
+input,
+textarea,
+label,
+navigator {
+  font-family: $qy-font-stack;
+}
+
+scroll-view {
+  font-family: $qy-font-stack;
+}
+
+.qy-scroll-fill {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+.qy-scroll-fill__grow {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+.qy-scroll-fill__main {
+  flex-shrink: 0;
+  width: 100%;
+}

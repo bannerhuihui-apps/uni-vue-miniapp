@@ -1,0 +1,125 @@
+{
+	"pages": [
+		{
+			"path": "pages/boot-loading/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "加载"
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "知我几分"
+			}
+		},
+		{
+			"path": "pages/test-pick/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "选择测评"
+			}
+		},
+		{
+			"path": "pages/quiz/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "性格测试",
+				"disableScroll": true
+			}
+		},
+		{
+			"path": "pages/result/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "测试结果"
+			}
+		},
+		{
+			"path": "pages/records/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "测试记录",
+				"enablePullDownRefresh": true,
+				"backgroundTextStyle": "dark"
+			}
+		},
+		{
+			"path": "pages/mutual-given-list/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "我给好友的互测"
+			}
+		},
+		{
+			"path": "pages/records-auth-hint/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "说明"
+			}
+		},
+		{
+			"path": "pages/info/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "性格类型说明"
+			}
+		},
+		{
+			"path": "pages/invite/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "邀请朋友来测"
+			}
+		},
+		{
+			"path": "pages/mutual-invite/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "好友互测"
+			}
+		},
+		{
+			"path": "pages/mutual-results/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "朋友们眼中的你"
+			}
+		},
+		{
+			"path": "pages/mutual-results-detail/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "朋友们眼中的你"
+			}
+		},
+		{
+			"path": "pages/compare/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "知我几分分析"
+			}
+		},
+		{
+			"path": "pages/settings/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "设置"
+			}
+		},
+		{
+			"path": "pages/profile-setup/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "完善资料"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "知我几分 · 性格测试",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#f7f2df"
+	}
+}

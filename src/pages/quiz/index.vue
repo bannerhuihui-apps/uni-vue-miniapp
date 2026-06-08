@@ -61,7 +61,12 @@
     <view v-if="qrModalVisible" class="qr-modal" @tap.stop="">
       <view class="qr-modal__mask tap" @tap="closeQrModal"></view>
       <view class="qr-modal__panel tap" @tap.stop="">
-        <image class="qr-modal__img" :src="IMG_QR_OTHER" mode="aspectFit" />
+        <image
+          class="qr-modal__img"
+          :src="IMG_QR_OTHER"
+          mode="aspectFit"
+          :show-menu-by-longpress="true"
+        />
         <text class="qr-modal__tip">长按识别二维码，进入ADE+文创商城</text>
       </view>
     </view>

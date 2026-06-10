@@ -75,8 +75,18 @@
 
       <view class="footer-block" :style="footerBlockStyle">
         <view class="footer-actions">
-          <view class="btn-main tap" @tap="startSelf">开始自测</view>
-          <view class="btn-main tap" :class="{ 'is-disabled': !canStartMutualFriend }" @tap="startMutualFriend">朋友测评</view>
+          <view class="footer-actions__left">
+            <view class="btn-main tap" @tap="startSelf">开始自测</view>
+            <view class="btn-main tap" :class="{ 'is-disabled': !canStartMutualFriend }" @tap="startMutualFriend">
+              朋友测评
+            </view>
+          </view>
+          <view class="btn-main btn-main--ai tap" @tap="openAiAnalysis">
+            <view class="btn-main--ai__stack">
+              <text class="btn-main--ai__tag">AI</text>
+              <text class="btn-main--ai__label">综合\n分析</text>
+            </view>
+          </view>
         </view>
         <view class="footer-bottom">
           <view class="link-row">
@@ -104,6 +114,8 @@ import { hasUsableWechatProfile } from "@/utils/minigame/profile-guard";
 import { hasSelfTestRecordForQuiz } from "@/utils/minigame/quiz-id";
 import { resolveIndexHomeQuizId } from "@/utils/minigame/index-home";
 import { readIndexHomeLayout } from "@/utils/minigame/index-home-layout";
+import { mgAiEligibility } from "@/api/minigame";
+import { AI_INELIGIBLE_MSG } from "@/utils/minigame/ai-analysis-gate";
 import { readTopRightGearTopPx } from "@/utils/minigame/nav-chrome";
 
 const carouselItems = indexHubCarousel;
@@ -337,6 +349,38 @@ function openInfo() {
   uni.navigateTo({
     url: `/pages/info/index?quizId=${encodeURIComponent(minigameApp.sessionQuizId)}`,
   });
+}
+
+async function openAiAnalysis() {
+  if (minigameApp.authStatus !== "success" || !minigameApp.userId) {
+    uni.navigateTo({ url: "/pages/records-auth-hint/index?step=login" });
+    return;
+  }
+  if (!hasUsableWechatProfile(minigameApp.profile)) {
+    uni.navigateTo({ url: "/pages/records-auth-hint/index?step=profile" });
+    return;
+  }
+
+  try {
+    uni.showLoading({ title: "检查中…", mask: true });
+    const res = await mgAiEligibility(minigameApp.userId);
+    uni.hideLoading();
+    if (!res?.eligible) {
+      uni.showModal({
+        title: "提示",
+        content: res?.message || AI_INELIGIBLE_MSG,
+        showCancel: false,
+      });
+      return;
+    }
+    uni.navigateTo({ url: "/pages/ai-analysis/index" });
+  } catch (e) {
+    uni.hideLoading();
+    uni.showToast({
+      title: e instanceof Error ? e.message : "检查失败",
+      icon: "none",
+    });
+  }
 }
 </script>
 
@@ -677,31 +721,112 @@ function openInfo() {
 .footer-actions {
   flex-shrink: 0;
   margin-top: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 20rpx;
+  padding: 20rpx 22rpx;
+  border-radius: 52rpx;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.52) 0%,
+    rgba(255, 250, 236, 0.38) 100%
+  );
+  border: 2rpx solid rgba(255, 255, 255, 0.82);
+  box-shadow: var(--qy-card-shadow);
+  box-sizing: border-box;
+}
+
+.footer-actions__left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.footer-actions__left .btn-main + .btn-main {
+  margin-top: 0;
 }
 
 .btn-main {
   flex-shrink: 0;
-  height: 108rpx;
-  line-height: 108rpx;
+  height: 100rpx;
+  line-height: 100rpx;
   text-align: center;
   border-radius: 999rpx;
-  font-size: 46rpx;
+  font-size: 44rpx;
   font-weight: 600;
-  color: rgba(140, 134, 130, 0.95);
-  background: linear-gradient(180deg, #fffdf6 0%, #fff4dc 48%, #ffefcf 100%);
-  border: 2rpx solid rgba(201, 172, 118, 0.72);
+  letter-spacing: 1rpx;
+  color: rgba(118, 108, 98, 0.96);
+  background: linear-gradient(180deg, #fffefb 0%, #fff7e8 52%, #ffefda 100%);
+  border: 2rpx solid rgba(196, 168, 118, 0.58);
   box-shadow:
-    0 6rpx 16rpx rgba(120, 90, 50, 0.07),
-    inset 0 1rpx 0 rgba(255, 255, 255, 0.65);
+    0 8rpx 20rpx rgba(88, 68, 40, 0.08),
+    inset 0 2rpx 0 rgba(255, 255, 255, 0.82);
   box-sizing: border-box;
 }
 
-.btn-main + .btn-main {
-  margin-top: 28rpx;
+.btn-main.is-disabled {
+  opacity: 1;
+  color: rgba(140, 134, 130, 0.42);
+  background: rgba(255, 255, 255, 0.42);
+  border-color: rgba(196, 168, 118, 0.28);
+  box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.5);
 }
 
-.btn-main.is-disabled {
-  opacity: 0.52;
+.btn-main--ai {
+  flex: 0 0 188rpx;
+  width: 188rpx;
+  height: auto;
+  min-height: 220rpx;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18rpx 14rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(
+    165deg,
+    rgba(198, 236, 220, 0.96) 0%,
+    rgba(255, 248, 226, 0.98) 48%,
+    rgba(255, 236, 198, 0.98) 100%
+  );
+  border: 2rpx solid rgba(130, 178, 152, 0.52);
+  box-shadow:
+    0 10rpx 24rpx rgba(72, 120, 96, 0.12),
+    inset 0 2rpx 0 rgba(255, 255, 255, 0.75);
+}
+
+.btn-main--ai__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6rpx;
+}
+
+.btn-main--ai__tag {
+  font-size: 34rpx;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  color: rgba(72, 118, 96, 0.92);
+}
+
+.btn-main--ai__label {
+  font-size: 38rpx;
+  font-weight: 600;
+  line-height: 1.28;
+  color: rgba(108, 98, 88, 0.96);
+  text-align: center;
+  white-space: pre-line;
+}
+
+.btn-main.tap:active,
+.btn-main--ai.tap:active {
+  transform: scale(0.985);
+  opacity: 0.94;
 }
 
 .tap:active {

@@ -100,6 +100,18 @@ export function mgWipeUserTestData(data: Record<string, unknown>) {
   return mgRequest("POST", "/storage/user-data/wipe", data);
 }
 
+export function mgAiEligibility(userId: string) {
+  return mgRequest("GET", `/ai/eligibility/${encodeURIComponent(userId)}`) as Promise<
+    import("@/utils/minigame/ai-analysis-gate").AiEligibilityResult
+  >;
+}
+
+export function mgAiReport(userId: string) {
+  return mgRequest("POST", "/ai/report", { userId }) as Promise<
+    import("@/utils/minigame/ai-analysis-gate").AiReportResult
+  >;
+}
+
 export function mgUploadAvatar(localFilePath: string, userId: string): Promise<{ url?: string } & unknown> {
   if (!MINIGAME_API_BASE_URL) return Promise.reject(new Error("apiBaseUrl 未配置"));
   return new Promise((resolve, reject) => {

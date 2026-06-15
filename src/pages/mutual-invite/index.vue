@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { onLoad } from "@dcloudio/uni-app";
+import { onLoad, onShow, onUnload } from "@dcloudio/uni-app";
 import { IMG_INDEX_BG } from "@/config/static-images";
 import * as mg from "@/api/minigame";
 import { getIndexHubCarouselLabel } from "@/data/index-hub-carousel";
@@ -52,6 +52,10 @@ import {
 const DEBUG_ALLOW_SELF_MUTUAL = false;
 
 const uiPreview = ref(false);
+/** 邀请发起人 userId（接口返回后写入，用于本人互测拦截） */
+const inviteOwnerUserIdRef = ref("");
+/** 邀请详情是否已从服务端加载完成 */
+const inviteLoadedRef = ref(false);
 
 function shortForButton(name: string, maxLen = 6): string {
   const s = (name || "朋友").trim();
@@ -91,16 +95,10 @@ function applyInviteState(
 function applyQueryFallback(query: Record<string, string | undefined>) {
   const parsed = parseMutualInviteQuery(query);
   if (!parsed.inviteId) return;
-  applyInviteState(
-    {
-      inviteId: parsed.inviteId,
-      ownerNickName: parsed.ownerNickName || "朋友",
-      selfTestId: parsed.selfTestId || "",
-      quizId: parsed.quizId || "mbti",
-      ownerResult: parsed.ownerResult || "",
-    },
-    query,
-  );
+  // 仅用于接口失败时的展示兜底，不写入 invite，避免缺少 ownerUserId 时绕过本人互测拦截
+  ownerName.value = parsed.ownerNickName || "朋友";
+  ownerShort.value = shortForButton(ownerName.value);
+  if (parsed.quizId) quizIdRef.value = parsed.quizId;
 }
 
 function syncName(query: Record<string, string | undefined>) {
@@ -162,17 +160,14 @@ onLoad((raw) => {
       };
       if (!invite || !invite.inviteId) {
         uni.showToast({ title: "邀请不存在或已失效", icon: "none" });
+        inviteLoadedRef.value = false;
+        minigameApp.invite = null;
         applyQueryFallback(query);
         return;
       }
-      const uid = minigameApp.userId;
-      if (
-        !DEBUG_ALLOW_SELF_MUTUAL &&
-        invite.ownerUserId &&
-        uid &&
-        invite.ownerUserId === uid
-      ) {
-        blockSelfMutualIfNeeded();
+      inviteOwnerUserIdRef.value = String(invite.ownerUserId || "").trim();
+      if (blockSelfMutual(invite.ownerUserId)) {
+        inviteLoadedRef.value = false;
         return;
       }
       const resolvedQuizId: SessionQuizId = invite.quizId
@@ -180,6 +175,7 @@ onLoad((raw) => {
         : query.quizId
           ? coerceRecordQuizId(decodeInviteQueryParam(query.quizId))
           : quizIdRef.value;
+      inviteLoadedRef.value = true;
       applyInviteState(
         {
           inviteId: invite.inviteId,
@@ -197,28 +193,52 @@ onLoad((raw) => {
     })
     .catch(() => {
       uni.hideLoading();
+      inviteLoadedRef.value = false;
+      minigameApp.invite = null;
       applyQueryFallback(query);
     });
 });
 
-function isSelfMutualBlocked(): boolean {
+function isSelfMutualOwner(ownerUserId?: string | null): boolean {
   if (DEBUG_ALLOW_SELF_MUTUAL) return false;
-  const inv = minigameApp.invite as { ownerUserId?: string } | null;
-  const uid = minigameApp.userId;
-  return !!(inv?.ownerUserId && uid && inv.ownerUserId === uid);
+  const owner = String(
+    ownerUserId ?? inviteOwnerUserIdRef.value ?? (minigameApp.invite as { ownerUserId?: string } | null)?.ownerUserId ?? "",
+  ).trim();
+  const uid = String(minigameApp.userId || "").trim();
+  return !!(owner && uid && owner === uid);
 }
 
-function blockSelfMutualIfNeeded(): boolean {
-  if (!isSelfMutualBlocked()) return false;
+function blockSelfMutual(ownerUserId?: string | null): boolean {
+  if (!isSelfMutualOwner(ownerUserId)) return false;
   uni.showToast({ title: "不能评价自己，请邀请朋友来测", icon: "none" });
   minigameApp.invite = null;
+  inviteOwnerUserIdRef.value = "";
+  inviteLoadedRef.value = false;
   ownerName.value = "朋友";
   ownerShort.value = "朋友";
   return true;
 }
 
+function revalidateSelfMutualBlock() {
+  if (!inviteOwnerUserIdRef.value && !minigameApp.invite) return;
+  blockSelfMutual();
+}
+
+onShow(() => {
+  revalidateSelfMutualBlock();
+});
+
+uni.$on("minigame-auth-resolved", revalidateSelfMutualBlock);
+onUnload(() => {
+  uni.$off("minigame-auth-resolved", revalidateSelfMutualBlock);
+});
+
 function startMutualQuiz() {
-  if (blockSelfMutualIfNeeded()) return;
+  if (!inviteLoadedRef.value) {
+    uni.showToast({ title: "邀请加载中，请稍候", icon: "none" });
+    return;
+  }
+  if (blockSelfMutual()) return;
   const inv = minigameApp.invite as { inviteId?: string; quizId?: SessionQuizId } | null;
   if (!inv || !inv.inviteId) {
     uni.showToast({ title: "请通过邀请链接进入", icon: "none" });

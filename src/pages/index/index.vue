@@ -100,6 +100,20 @@
 
     <!-- 与 zhiwo 首页一致：登录/拉取记录期间展示过渡，避免白屏 -->
     <ZhiwoBootLoading v-if="showLoading" @settings="goSettings" />
+
+    <view v-if="aiGateModalVisible" class="ai-gate-modal">
+      <view class="ai-gate-modal__mask tap" @tap="closeAiGateModal"></view>
+      <view class="ai-gate-modal__panel" @tap.stop="">
+        <text class="ai-gate-modal__title">提示</text>
+        <text class="ai-gate-modal__msg">{{ aiGateModalMsg }}</text>
+        <view class="ai-gate-modal__actions">
+          <view class="ai-gate-modal__btn ai-gate-modal__btn--ghost tap" @tap="closeAiGateModal">知道了</view>
+          <view class="ai-gate-modal__btn ai-gate-modal__btn--sample tap" @tap="openAiSampleReport">查看示例</view>
+        </view>
+      </view>
+    </view>
+
+    <AiReportSampleOverlay :visible="aiSampleVisible" @close="closeAiSampleOverlay" />
   </view>
 </template>
 
@@ -108,6 +122,8 @@ import { onLoad, onShow, onUnload } from "@dcloudio/uni-app";
 import { computed, ref } from "vue";
 import { IMG_INDEX_BG, IMG_SETTINGS } from "@/config/static-images";
 import ZhiwoBootLoading from "@/components/ZhiwoBootLoading.vue";
+import AiReportSampleOverlay from "@/components/AiReportSampleOverlay.vue";
+import { AI_REPORT_SAMPLE_CONTENT } from "@/data/ai-report-sample";
 import { indexHubCarousel, getIndexHubCarouselLabel, getIndexHubInfoLinkLabel } from "@/data/index-hub-carousel";
 import { minigameApp, type SessionQuizId } from "@/state/minigame-app";
 import { hasUsableWechatProfile } from "@/utils/minigame/profile-guard";
@@ -261,6 +277,9 @@ const gearWrapStyle = computed(() => ({ top: `${gearTopPx.value}px` }));
 const showBack = ref(false);
 const showLoading = ref(minigameApp.authStatus === "loading");
 const showMain = ref(minigameApp.authStatus !== "loading");
+const aiGateModalVisible = ref(false);
+const aiGateModalMsg = ref("");
+const aiSampleVisible = ref(false);
 
 function syncBootState() {
   showLoading.value = minigameApp.authStatus === "loading";
@@ -366,11 +385,8 @@ async function openAiAnalysis() {
     const res = await mgAiEligibility(minigameApp.userId);
     uni.hideLoading();
     if (!res?.eligible) {
-      uni.showModal({
-        title: "提示",
-        content: res?.message || AI_INELIGIBLE_MSG,
-        showCancel: false,
-      });
+      aiGateModalMsg.value = res?.message || AI_INELIGIBLE_MSG;
+      aiGateModalVisible.value = true;
       return;
     }
     uni.navigateTo({ url: "/pages/ai-analysis/index" });
@@ -381,6 +397,19 @@ async function openAiAnalysis() {
       icon: "none",
     });
   }
+}
+
+function closeAiGateModal() {
+  aiGateModalVisible.value = false;
+}
+
+function openAiSampleReport() {
+  aiGateModalVisible.value = false;
+  aiSampleVisible.value = true;
+}
+
+function closeAiSampleOverlay() {
+  aiSampleVisible.value = false;
 }
 </script>
 
@@ -746,6 +775,10 @@ async function openAiAnalysis() {
   gap: 20rpx;
 }
 
+.footer-actions__left .btn-main {
+  width: 100%;
+}
+
 .footer-actions__left .btn-main + .btn-main {
   margin-top: 0;
 }
@@ -777,26 +810,21 @@ async function openAiAnalysis() {
 }
 
 .btn-main--ai {
-  flex: 0 0 188rpx;
-  width: 188rpx;
-  height: auto;
-  min-height: 220rpx;
+  flex: 0 0 120rpx;
+  width: 120rpx;
+  height: 220rpx;
+  min-height: 0;
   line-height: 1.2;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18rpx 14rpx;
-  border-radius: 999rpx;
-  background: linear-gradient(
-    165deg,
-    rgba(198, 236, 220, 0.96) 0%,
-    rgba(255, 248, 226, 0.98) 48%,
-    rgba(255, 236, 198, 0.98) 100%
-  );
-  border: 2rpx solid rgba(130, 178, 152, 0.52);
+  padding: 12rpx 8rpx;
+  border-radius: 26rpx;
+  background: linear-gradient(180deg, #fffefb 0%, #fff7e8 52%, #ffefda 100%);
+  border: 2rpx solid rgba(196, 168, 118, 0.58);
   box-shadow:
-    0 10rpx 24rpx rgba(72, 120, 96, 0.12),
-    inset 0 2rpx 0 rgba(255, 255, 255, 0.75);
+    0 8rpx 20rpx rgba(88, 68, 40, 0.08),
+    inset 0 2rpx 0 rgba(255, 255, 255, 0.82);
 }
 
 .btn-main--ai__stack {
@@ -804,21 +832,21 @@ async function openAiAnalysis() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6rpx;
+  gap: 4rpx;
 }
 
 .btn-main--ai__tag {
-  font-size: 34rpx;
+  font-size: 30rpx;
   font-weight: 700;
-  letter-spacing: 2rpx;
-  color: rgba(72, 118, 96, 0.92);
+  letter-spacing: 0;
+  color: rgba(118, 108, 98, 0.96);
 }
 
 .btn-main--ai__label {
-  font-size: 38rpx;
+  font-size: 28rpx;
   font-weight: 600;
-  line-height: 1.28;
-  color: rgba(108, 98, 88, 0.96);
+  line-height: 1.25;
+  color: rgba(118, 108, 98, 0.96);
   text-align: center;
   white-space: pre-line;
 }
@@ -878,5 +906,83 @@ async function openAiAnalysis() {
   color: rgba(140, 134, 130, 0.95);
   padding-left: 12rpx;
   padding-right: 12rpx;
+}
+
+.ai-gate-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48rpx 56rpx;
+  box-sizing: border-box;
+}
+
+.ai-gate-modal__mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(40, 36, 32, 0.42);
+}
+
+.ai-gate-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 620rpx;
+  padding: 40rpx 36rpx 32rpx;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 40rpx;
+  border: 2rpx solid rgba(196, 168, 118, 0.35);
+  box-shadow: var(--qy-card-shadow-modal);
+}
+
+.ai-gate-modal__title {
+  display: block;
+  text-align: center;
+  font-size: 38rpx;
+  font-weight: 700;
+  color: rgba(72, 62, 52, 0.94);
+  margin-bottom: 24rpx;
+}
+
+.ai-gate-modal__msg {
+  display: block;
+  font-size: 30rpx;
+  line-height: 1.62;
+  color: var(--qy-text-mute);
+  text-align: center;
+  padding: 0 8rpx;
+}
+
+.ai-gate-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-top: 36rpx;
+}
+
+.ai-gate-modal__btn {
+  height: 96rpx;
+  line-height: 96rpx;
+  text-align: center;
+  border-radius: 999rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+.ai-gate-modal__btn--ghost {
+  color: rgba(118, 108, 98, 0.88);
+  background: rgba(255, 255, 255, 0.72);
+  border: 2rpx solid rgba(196, 168, 118, 0.38);
+}
+
+.ai-gate-modal__btn--sample {
+  color: var(--qy-link-strong);
+  background: var(--qy-lemon);
+  border: 2rpx solid var(--qy-card-stroke);
+  box-shadow: 0 8rpx 20rpx rgba(88, 68, 40, 0.08);
 }
 </style>

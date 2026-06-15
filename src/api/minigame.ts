@@ -4,6 +4,9 @@
 import { MINIGAME_API_BASE_URL } from "@/config/minigame";
 
 const REQUEST_TIMEOUT_MS = 20000;
+/** AI 报告生成（DeepSeek）可能超过 20s，微信小程序建议配合轮询 */
+export const AI_REPORT_TIMEOUT_MS = 60000;
+export const AI_REPORT_PENDING_CODE = 4024;
 
 function parseResponseData(raw: unknown): Record<string, unknown> {
   if (raw == null) return {};
@@ -18,15 +21,21 @@ function parseResponseData(raw: unknown): Record<string, unknown> {
   return {};
 }
 
-export async function mgRequest(method: string, path: string, data?: Record<string, unknown>): Promise<unknown> {
+export async function mgRequest(
+  method: string,
+  path: string,
+  data?: Record<string, unknown>,
+  opts?: { timeoutMs?: number },
+): Promise<unknown> {
   if (!MINIGAME_API_BASE_URL) throw new Error("apiBaseUrl 未配置");
 
+  const timeoutMs = opts?.timeoutMs ?? REQUEST_TIMEOUT_MS;
   const isPostLike = method === "POST" || method === "PUT" || method === "PATCH";
   const isGet = method === "GET";
   const res = await uni.request({
     url: `${MINIGAME_API_BASE_URL}${path}`,
     method: method as "GET" | "POST",
-    timeout: REQUEST_TIMEOUT_MS,
+    timeout: timeoutMs,
     ...(isGet ? {} : { data: data ?? {} }),
     header: isPostLike ? { "content-type": "application/json" } : {},
   });
@@ -107,9 +116,16 @@ export function mgAiEligibility(userId: string) {
 }
 
 export function mgAiReport(userId: string) {
-  return mgRequest("POST", "/ai/report", { userId }) as Promise<
+  return mgRequest("POST", "/ai/report", { userId }, { timeoutMs: AI_REPORT_TIMEOUT_MS }) as Promise<
     import("@/utils/minigame/ai-analysis-gate").AiReportResult
   >;
+}
+
+/** 仅查询当前数据是否已有缓存报告（不触发 DeepSeek），用于 POST 超时后轮询 */
+export function mgAiReportReady(userId: string) {
+  return mgRequest("GET", `/ai/report/ready/${encodeURIComponent(userId)}`, undefined, {
+    timeoutMs: 15000,
+  }) as Promise<import("@/utils/minigame/ai-analysis-gate").AiReportResult>;
 }
 
 export function mgUploadAvatar(localFilePath: string, userId: string): Promise<{ url?: string } & unknown> {

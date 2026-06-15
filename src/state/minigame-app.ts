@@ -62,4 +62,6 @@ export const minigameApp = reactive({
   mutualAllQuizId: "" as SessionQuizId | "",
   currentSelfRecord: null as unknown,
   showMutualSelfResult: true,
+  /** 上次成功展示的 AI 报告对应的数据指纹 */
+  lastAiReportDataHash: "",
 });

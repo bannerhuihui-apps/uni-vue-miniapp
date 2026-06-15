@@ -7,7 +7,17 @@
       <ZhiwoNavBar title="AI 综合分析" title-color="rgba(0,0,0,0.78)" />
 
       <view v-if="loading" class="state-box">
-        <text class="state-text">正在生成分析报告…</text>
+        <view class="loading-panel">
+          <view class="loading-spinner" aria-hidden="true">
+            <view class="loading-spinner__ring"></view>
+            <view class="loading-spinner__core">AI</view>
+          </view>
+          <text class="loading-panel__title">正在生成分析报告</text>
+          <view class="loading-panel__track" aria-hidden="true">
+            <view class="loading-panel__fill"></view>
+          </view>
+          <text class="loading-panel__hint">{{ loadingHint }}</text>
+        </view>
       </view>
 
       <view v-else-if="errorMsg" class="state-box">
@@ -17,9 +27,8 @@
       <template v-else>
         <scroll-view scroll-y enhanced class="scroll-area" :show-scrollbar="false">
           <view class="scroll-inner">
-            <view v-if="modelLabel" class="meta-badge">{{ modelLabel }}</view>
             <view class="card">
-              <text class="report-body">{{ content }}</text>
+              <AiReportBody :content="content" />
             </view>
             <view class="scroll-tail-spacer"></view>
           </view>
@@ -34,52 +43,64 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { onLoad } from "@dcloudio/uni-app";
-import { mgAiReport } from "@/api/minigame";
+import { ref } from "vue";
+import { onShow } from "@dcloudio/uni-app";
+import { fetchAiReport } from "@/utils/minigame/ai-analysis-gate";
 import { IMG_QUESTION_BG } from "@/config/static-images";
 import ZhiwoNavBar from "@/components/ZhiwoNavBar.vue";
+import AiReportBody from "@/components/AiReportBody.vue";
 import { minigameApp } from "@/state/minigame-app";
 
 const loading = ref(true);
 const errorMsg = ref("");
+const loadingHint = ref("首次生成约需 1～2 分钟，请稍候…");
 const content = ref("");
-const model = ref("");
 
-const modelLabel = computed(() => {
-  const m = model.value.trim();
-  if (!m) return "";
-  if (m.startsWith("template")) return "模板报告（DeepSeek 未接入）";
-  return `模型：${m}`;
-});
+let loadSeq = 0;
 
-onLoad(() => {
-  loadReport();
+onShow(() => {
+  void loadReport();
 });
 
 async function loadReport() {
+  const seq = ++loadSeq;
   loading.value = true;
   errorMsg.value = "";
   content.value = "";
 
   const userId = minigameApp.userId;
   if (!userId || minigameApp.authStatus !== "success") {
-    loading.value = false;
-    errorMsg.value = "请先登录后再查看 AI 分析。";
+    if (seq === loadSeq) {
+      loading.value = false;
+      errorMsg.value = "请先登录后再查看 AI 分析。";
+    }
     return;
   }
 
+  const prevHash = minigameApp.lastAiReportDataHash;
+  if (prevHash) {
+    loadingHint.value = "正在同步最新测试数据…";
+  } else {
+    loadingHint.value = "首次生成约需 1～2 分钟，请稍候…";
+  }
+
   try {
-    const res = await mgAiReport(userId);
+    const res = await fetchAiReport(userId, (hint) => {
+      if (seq === loadSeq) loadingHint.value = hint;
+    });
+    if (seq !== loadSeq) return;
+
     content.value = String(res?.content ?? "").trim();
-    model.value = String(res?.model ?? "").trim();
+    const nextHash = String(res?.dataHash ?? "").trim();
+    if (nextHash) minigameApp.lastAiReportDataHash = nextHash;
     if (!content.value) {
       errorMsg.value = "报告内容为空，请稍后再试。";
     }
   } catch (e) {
+    if (seq !== loadSeq) return;
     errorMsg.value = e instanceof Error ? e.message : "报告生成失败";
   } finally {
-    loading.value = false;
+    if (seq === loadSeq) loading.value = false;
   }
 }
 
@@ -129,7 +150,104 @@ function onCopy() {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40rpx;
+  padding: 48rpx 56rpx;
+}
+
+.loading-panel {
+  width: 100%;
+  max-width: 560rpx;
+  padding: 48rpx 40rpx 44rpx;
+  box-sizing: border-box;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 48rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 12rpx 40rpx rgba(120, 100, 60, 0.12);
+}
+
+.loading-spinner {
+  position: relative;
+  width: 128rpx;
+  height: 128rpx;
+  margin: 0 auto 32rpx;
+}
+
+.loading-spinner__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 6rpx solid rgba(213, 241, 228, 0.55);
+  border-top-color: rgba(212, 168, 75, 0.95);
+  border-right-color: rgba(180, 220, 200, 0.85);
+  animation: ai-spin 1.1s linear infinite;
+}
+
+.loading-spinner__core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 72rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  border-radius: 50%;
+  font-size: 28rpx;
+  font-weight: 800;
+  color: rgba(100, 78, 48, 0.9);
+  background: linear-gradient(135deg, rgba(255, 244, 210, 0.96), rgba(213, 241, 228, 0.92));
+  box-shadow: inset 0 2rpx 8rpx rgba(255, 255, 255, 0.8);
+}
+
+.loading-panel__title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 700;
+  line-height: 1.4;
+  color: rgba(72, 62, 52, 0.94);
+  margin-bottom: 28rpx;
+}
+
+.loading-panel__track {
+  height: 16rpx;
+  border-radius: 999rpx;
+  background: rgba(240, 235, 225, 0.9);
+  overflow: hidden;
+}
+
+.loading-panel__fill {
+  height: 100%;
+  width: 40%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, rgba(213, 241, 228, 0.98), rgba(245, 215, 110, 0.98));
+  animation: ai-loading-bar 1.6s ease-in-out infinite alternate;
+}
+
+.loading-panel__hint {
+  display: block;
+  margin-top: 28rpx;
+  font-size: 26rpx;
+  line-height: 1.55;
+  color: var(--qy-text-mute);
+}
+
+@keyframes ai-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ai-loading-bar {
+  0% {
+    width: 28%;
+    opacity: 0.85;
+  }
+  100% {
+    width: 88%;
+    opacity: 1;
+  }
 }
 
 .state-text {
@@ -156,32 +274,12 @@ function onCopy() {
   padding-bottom: 24rpx;
 }
 
-.meta-badge {
-  display: block;
-  margin-bottom: 20rpx;
-  padding: 12rpx 24rpx;
-  border-radius: 999rpx;
-  text-align: center;
-  font-size: 24rpx;
-  font-weight: 600;
-  color: rgba(120, 90, 50, 0.88);
-  background: rgba(255, 244, 210, 0.92);
-  border: 2rpx solid rgba(201, 172, 118, 0.45);
-}
-
 .card {
-  background: rgba(255, 255, 255, 0.76);
+  background: rgba(255, 255, 255, 0.82);
   border-radius: 48rpx;
   border: 2rpx solid var(--qy-card-stroke);
-  padding: 28rpx 32rpx;
-}
-
-.report-body {
-  display: block;
-  font-size: 34rpx;
-  line-height: 1.55;
-  color: var(--qy-text-mute);
-  white-space: pre-wrap;
+  padding: 36rpx 32rpx 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(120, 100, 60, 0.08);
 }
 
 .scroll-tail-spacer {

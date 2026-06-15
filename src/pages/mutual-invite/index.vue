@@ -48,7 +48,7 @@ import {
   seedMutualInvitePreview,
 } from "@/utils/minigame/ui-preview";
 
-/** 正式环境须为 false：禁止发起人打开自己的互测邀请 */
+/** 体验版测试可 true；正式上架前改回 false（禁止发起人打开自己的互测邀请） */
 const DEBUG_ALLOW_SELF_MUTUAL = false;
 
 const uiPreview = ref(false);

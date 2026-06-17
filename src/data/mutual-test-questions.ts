@@ -1,7 +1,5 @@
 'use strict'
-/**
- * 由 mutual-test-questions.js 同步生成：小程序端避免 import * + CJS interop 得到 undefined。
- */
+/** 知我几分 MBTI 互测 20 题（由 知我几分-MBTI测试题-20.xlsx sheet2 同步） */
 
 import type { QuizQuestion } from '@/state/minigame-app';
 
@@ -36,62 +34,6 @@ const data = [
   },
   {
     "id": "M03",
-    "text": "您朋友在平时是哪种风格？",
-    "options": [
-      {
-        "text": "情感支配理智",
-        "letter": "F"
-      },
-      {
-        "text": "理智主宰情感",
-        "letter": "T"
-      }
-    ]
-  },
-  {
-    "id": "M04",
-    "text": "如果您朋友有一份特别的任务，TA会",
-    "options": [
-      {
-        "text": "开始前小心组织计划",
-        "letter": "J"
-      },
-      {
-        "text": "边做边找寻解决办法",
-        "letter": "P"
-      }
-    ]
-  },
-  {
-    "id": "M05",
-    "text": "您觉得您朋友是",
-    "options": [
-      {
-        "text": "重视自我隐私的人",
-        "letter": "I"
-      },
-      {
-        "text": "非常坦率开放的人",
-        "letter": "E"
-      }
-    ]
-  },
-  {
-    "id": "M06",
-    "text": "您觉得您朋友是",
-    "options": [
-      {
-        "text": "实事求是的人",
-        "letter": "S"
-      },
-      {
-        "text": "随机应变的人",
-        "letter": "N"
-      }
-    ]
-  },
-  {
-    "id": "M07",
     "text": "当TA有空可以外出一整天，TA会怎么做？",
     "options": [
       {
@@ -105,7 +47,7 @@ const data = [
     ]
   },
   {
-    "id": "M08",
+    "id": "M04",
     "text": "TA的性格更倾向于哪种？",
     "options": [
       {
@@ -119,7 +61,7 @@ const data = [
     ]
   },
   {
-    "id": "M09",
+    "id": "M05",
     "text": "TA会花很多的时间",
     "options": [
       {
@@ -133,21 +75,7 @@ const data = [
     ]
   },
   {
-    "id": "M10",
-    "text": "计划一个旅程时，TA会",
-    "options": [
-      {
-        "text": "大部分的时间都是跟当天的感觉行事",
-        "letter": "P"
-      },
-      {
-        "text": "事先知道大部分的日子会做什么",
-        "letter": "J"
-      }
-    ]
-  },
-  {
-    "id": "M11",
+    "id": "M06",
     "text": "什么样的人会更容易被TA接受？",
     "options": [
       {
@@ -161,7 +89,7 @@ const data = [
     ]
   },
   {
-    "id": "M12",
+    "id": "M07",
     "text": "与很多人在一起，会让您的朋友",
     "options": [
       {
@@ -175,21 +103,7 @@ const data = [
     ]
   },
   {
-    "id": "M13",
-    "text": "在下列一对词语中，哪一个更符合您对TA的印象？",
-    "options": [
-      {
-        "text": "温柔",
-        "letter": "F"
-      },
-      {
-        "text": "坚定",
-        "letter": "T"
-      }
-    ]
-  },
-  {
-    "id": "M14",
+    "id": "M08",
     "text": "在下列一对词语中，哪一个更符合您对TA的印象？",
     "options": [
       {
@@ -203,21 +117,7 @@ const data = [
     ]
   },
   {
-    "id": "M15",
-    "text": "在下列一对词语中，哪一个更符合您对TA的印象？",
-    "options": [
-      {
-        "text": "文静",
-        "letter": "I"
-      },
-      {
-        "text": "活跃",
-        "letter": "E"
-      }
-    ]
-  },
-  {
-    "id": "M16",
+    "id": "M09",
     "text": "在下列一对词语中，哪一个更符合您对TA的印象？",
     "options": [
       {
@@ -231,7 +131,7 @@ const data = [
     ]
   },
   {
-    "id": "M17",
+    "id": "M10",
     "text": "平时生活中，TA更偏向于哪种风格",
     "options": [
       {
@@ -245,21 +145,7 @@ const data = [
     ]
   },
   {
-    "id": "M18",
-    "text": "TA更偏向于哪种风格",
-    "options": [
-      {
-        "text": "务实派",
-        "letter": "S"
-      },
-      {
-        "text": "理论派",
-        "letter": "N"
-      }
-    ]
-  },
-  {
-    "id": "M19",
+    "id": "M11",
     "text": "TA的朋友多吗？",
     "options": [
       {
@@ -273,21 +159,7 @@ const data = [
     ]
   },
   {
-    "id": "M20",
-    "text": "TA的风格更倾向于哪种",
-    "options": [
-      {
-        "text": "富想象的",
-        "letter": "N"
-      },
-      {
-        "text": "以事论事",
-        "letter": "S"
-      }
-    ]
-  },
-  {
-    "id": "M21",
+    "id": "M12",
     "text": "TA的风格更倾向于哪种",
     "options": [
       {
@@ -301,35 +173,7 @@ const data = [
     ]
   },
   {
-    "id": "M22",
-    "text": "当TA要在一个星期内完成一个新项目，TA会",
-    "options": [
-      {
-        "text": "把要做的不同工作依次列出",
-        "letter": "J"
-      },
-      {
-        "text": "马上动工，边干边研究",
-        "letter": "P"
-      }
-    ]
-  },
-  {
-    "id": "M23",
-    "text": "在社交场合中，TA表现如何？",
-    "options": [
-      {
-        "text": "与某些人很难打开话匣儿和保持对话",
-        "letter": "I"
-      },
-      {
-        "text": "与多数人都能从容地长谈",
-        "letter": "E"
-      }
-    ]
-  },
-  {
-    "id": "M24",
+    "id": "M13",
     "text": "要做许多人也做的事，TA比较喜欢",
     "options": [
       {
@@ -343,21 +187,7 @@ const data = [
     ]
   },
   {
-    "id": "M25",
-    "text": "对TA来说，哪个说法更贴切？",
-    "options": [
-      {
-        "text": "一贯感性的人",
-        "letter": "F"
-      },
-      {
-        "text": "一贯理性的人",
-        "letter": "T"
-      }
-    ]
-  },
-  {
-    "id": "M26",
+    "id": "M14",
     "text": "在社交聚会上，会TA",
     "options": [
       {
@@ -371,35 +201,7 @@ const data = [
     ]
   },
   {
-    "id": "M27",
-    "text": "TA通常喜欢",
-    "options": [
-      {
-        "text": "按照规则及制度做事",
-        "letter": "J"
-      },
-      {
-        "text": "按照自我认知做事",
-        "letter": "P"
-      }
-    ]
-  },
-  {
-    "id": "M28",
-    "text": "TA能否滔滔不绝地与人聊天？",
-    "options": [
-      {
-        "text": "只限于跟你有共同兴趣的人",
-        "letter": "I"
-      },
-      {
-        "text": "几乎跟任何人都可以",
-        "letter": "E"
-      }
-    ]
-  },
-  {
-    "id": "M29",
+    "id": "M15",
     "text": "TA会更喜欢看哪种类型的书？",
     "options": [
       {
@@ -413,7 +215,7 @@ const data = [
     ]
   },
   {
-    "id": "M30",
+    "id": "M16",
     "text": "TA更愿意与哪一类同事工作？",
     "options": [
       {
@@ -427,7 +229,7 @@ const data = [
     ]
   },
   {
-    "id": "M31",
+    "id": "M17",
     "text": "朋友来家里吃饭，TA会如何准备？",
     "options": [
       {
@@ -441,7 +243,7 @@ const data = [
     ]
   },
   {
-    "id": "M32",
+    "id": "M18",
     "text": "要作决定时，TA的评判标准是什么？",
     "options": [
       {
@@ -455,21 +257,7 @@ const data = [
     ]
   },
   {
-    "id": "M33",
-    "text": "在下列词语中，哪一个词语可以更贴切的形容TA？",
-    "options": [
-      {
-        "text": "想象的",
-        "letter": "N"
-      },
-      {
-        "text": "真实的",
-        "letter": "S"
-      }
-    ]
-  },
-  {
-    "id": "M34",
+    "id": "M19",
     "text": "在相处中，TA更多表现的是哪种面孔？",
     "options": [
       {
@@ -483,7 +271,7 @@ const data = [
     ]
   },
   {
-    "id": "M35",
+    "id": "M20",
     "text": "哪种描述更符合TA的行为方式？",
     "options": [
       {
@@ -493,20 +281,6 @@ const data = [
       {
         "text": "关注现有事物",
         "letter": "S"
-      }
-    ]
-  },
-  {
-    "id": "M36",
-    "text": "哪种描述更符合TA的处事风格？",
-    "options": [
-      {
-        "text": "秉持公理",
-        "letter": "T"
-      },
-      {
-        "text": "温柔有爱心",
-        "letter": "F"
       }
     ]
   }

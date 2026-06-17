@@ -1,7 +1,5 @@
 'use strict'
-/**
- * 由 self-test-questions.js 同步生成：小程序端避免 import * + CJS interop 得到 undefined。
- */
+/** 知我几分 MBTI 自测 20 题（由 知我几分-MBTI测试题-20.xlsx sheet1 同步） */
 
 import type { QuizQuestion } from '@/state/minigame-app';
 
@@ -36,62 +34,6 @@ const data = [
   },
   {
     "id": "S03",
-    "text": "你是否经常让",
-    "options": [
-      {
-        "text": "你的情感支配你的理智",
-        "letter": "F"
-      },
-      {
-        "text": "你的理智主宰你的情感",
-        "letter": "T"
-      }
-    ]
-  },
-  {
-    "id": "S04",
-    "text": "当你有一份特别的任务，你会喜欢",
-    "options": [
-      {
-        "text": "开始前小心组织计划",
-        "letter": "J"
-      },
-      {
-        "text": "边做边找寻解决办法",
-        "letter": "P"
-      }
-    ]
-  },
-  {
-    "id": "S05",
-    "text": "大多数人会说你是一个",
-    "options": [
-      {
-        "text": "重视自我隐私的人",
-        "letter": "I"
-      },
-      {
-        "text": "非常坦率开放的人",
-        "letter": "E"
-      }
-    ]
-  },
-  {
-    "id": "S06",
-    "text": "你宁愿被人认为是一个",
-    "options": [
-      {
-        "text": "实事求是的人",
-        "letter": "S"
-      },
-      {
-        "text": "随机应变的人",
-        "letter": "N"
-      }
-    ]
-  },
-  {
-    "id": "S07",
     "text": "当你有空可以外出一整天，你会怎么做？",
     "options": [
       {
@@ -105,7 +47,7 @@ const data = [
     ]
   },
   {
-    "id": "S08",
+    "id": "S04",
     "text": "你倾向",
     "options": [
       {
@@ -119,7 +61,7 @@ const data = [
     ]
   },
   {
-    "id": "S09",
+    "id": "S05",
     "text": "你喜欢花很多的时间",
     "options": [
       {
@@ -133,21 +75,7 @@ const data = [
     ]
   },
   {
-    "id": "S10",
-    "text": "计划一个旅程时，你较喜欢",
-    "options": [
-      {
-        "text": "大部分的时间都是跟当天的感觉行事",
-        "letter": "P"
-      },
-      {
-        "text": "事先知道大部分的日子会做什么",
-        "letter": "J"
-      }
-    ]
-  },
-  {
-    "id": "S11",
+    "id": "S06",
     "text": "哪些人会更吸引你？",
     "options": [
       {
@@ -161,7 +89,7 @@ const data = [
     ]
   },
   {
-    "id": "S12",
+    "id": "S07",
     "text": "与很多人一起会",
     "options": [
       {
@@ -175,21 +103,7 @@ const data = [
     ]
   },
   {
-    "id": "S13",
-    "text": "在下列一对词语中，哪一个更合你心意？",
-    "options": [
-      {
-        "text": "温柔",
-        "letter": "F"
-      },
-      {
-        "text": "坚定",
-        "letter": "T"
-      }
-    ]
-  },
-  {
-    "id": "S14",
+    "id": "S08",
     "text": "在下列一对词语中，哪一个更合你心意？",
     "options": [
       {
@@ -203,21 +117,7 @@ const data = [
     ]
   },
   {
-    "id": "S15",
-    "text": "在下列一对词语中，哪一个更合你心意？",
-    "options": [
-      {
-        "text": "文静",
-        "letter": "I"
-      },
-      {
-        "text": "活跃",
-        "letter": "E"
-      }
-    ]
-  },
-  {
-    "id": "S16",
+    "id": "S09",
     "text": "在下列语句中，哪一个更合你心意？",
     "options": [
       {
@@ -231,7 +131,7 @@ const data = [
     ]
   },
   {
-    "id": "S17",
+    "id": "S10",
     "text": "平时生活中，你更偏向于哪种风格",
     "options": [
       {
@@ -245,21 +145,7 @@ const data = [
     ]
   },
   {
-    "id": "S18",
-    "text": "你更偏向于哪种风格",
-    "options": [
-      {
-        "text": "务实派",
-        "letter": "S"
-      },
-      {
-        "text": "理论派",
-        "letter": "N"
-      }
-    ]
-  },
-  {
-    "id": "S19",
+    "id": "S11",
     "text": "你的朋友多吗？",
     "options": [
       {
@@ -273,21 +159,7 @@ const data = [
     ]
   },
   {
-    "id": "S20",
-    "text": "你的风格更倾向于哪种",
-    "options": [
-      {
-        "text": "富想象的",
-        "letter": "N"
-      },
-      {
-        "text": "以事论事",
-        "letter": "S"
-      }
-    ]
-  },
-  {
-    "id": "S21",
+    "id": "S12",
     "text": "你的风格更倾向于哪种",
     "options": [
       {
@@ -301,35 +173,7 @@ const data = [
     ]
   },
   {
-    "id": "S22",
-    "text": "当你要在一个星期内完成一个新项目，你在开始的时候会",
-    "options": [
-      {
-        "text": "把要做的不同工作依次列出",
-        "letter": "J"
-      },
-      {
-        "text": "马上动工，边干边研究",
-        "letter": "P"
-      }
-    ]
-  },
-  {
-    "id": "S23",
-    "text": "在社交场合中，你经常会感到",
-    "options": [
-      {
-        "text": "与某些人很难打开话匣儿和保持对话",
-        "letter": "I"
-      },
-      {
-        "text": "与多数人都能从容地长谈",
-        "letter": "E"
-      }
-    ]
-  },
-  {
-    "id": "S24",
+    "id": "S13",
     "text": "要做许多人也做的事，你比较喜欢",
     "options": [
       {
@@ -343,21 +187,7 @@ const data = [
     ]
   },
   {
-    "id": "S25",
-    "text": "对你来说，哪个是较高的赞誉",
-    "options": [
-      {
-        "text": "一贯感性的人",
-        "letter": "F"
-      },
-      {
-        "text": "一贯理性的人",
-        "letter": "T"
-      }
-    ]
-  },
-  {
-    "id": "S26",
+    "id": "S14",
     "text": "在社交聚会上，你会",
     "options": [
       {
@@ -371,35 +201,7 @@ const data = [
     ]
   },
   {
-    "id": "S27",
-    "text": "你通常喜欢",
-    "options": [
-      {
-        "text": "按照规则及制度做事",
-        "letter": "J"
-      },
-      {
-        "text": "按照自我认知做事",
-        "letter": "P"
-      }
-    ]
-  },
-  {
-    "id": "S28",
-    "text": "你能否滔滔不绝地与人聊天？",
-    "options": [
-      {
-        "text": "只限于跟你有共同兴趣的人",
-        "letter": "I"
-      },
-      {
-        "text": "几乎跟任何人都可以",
-        "letter": "E"
-      }
-    ]
-  },
-  {
-    "id": "S29",
+    "id": "S15",
     "text": "为乐趣而阅读时，你会",
     "options": [
       {
@@ -413,7 +215,7 @@ const data = [
     ]
   },
   {
-    "id": "S30",
+    "id": "S16",
     "text": "你更愿意与哪一类同事工作？",
     "options": [
       {
@@ -427,7 +229,7 @@ const data = [
     ]
   },
   {
-    "id": "S31",
+    "id": "S17",
     "text": "朋友来家里吃饭，你会如何准备？",
     "options": [
       {
@@ -441,7 +243,7 @@ const data = [
     ]
   },
   {
-    "id": "S32",
+    "id": "S18",
     "text": "要作决定时，你认为比较重要的是",
     "options": [
       {
@@ -455,21 +257,7 @@ const data = [
     ]
   },
   {
-    "id": "S33",
-    "text": "在下列词语中，哪一个词语更合你心意？",
-    "options": [
-      {
-        "text": "想象的",
-        "letter": "N"
-      },
-      {
-        "text": "真实的",
-        "letter": "S"
-      }
-    ]
-  },
-  {
-    "id": "S34",
+    "id": "S19",
     "text": "你更喜欢别人眼里的你是哪种风格的？",
     "options": [
       {
@@ -483,7 +271,7 @@ const data = [
     ]
   },
   {
-    "id": "S35",
+    "id": "S20",
     "text": "哪种描述更符合你的偏好？",
     "options": [
       {
@@ -493,20 +281,6 @@ const data = [
       {
         "text": "关注现有事物",
         "letter": "S"
-      }
-    ]
-  },
-  {
-    "id": "S36",
-    "text": "哪种描述更符合你的处事风格？",
-    "options": [
-      {
-        "text": "秉持公理",
-        "letter": "T"
-      },
-      {
-        "text": "温柔有爱心",
-        "letter": "F"
       }
     ]
   }

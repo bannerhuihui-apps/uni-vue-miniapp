@@ -13,7 +13,7 @@ export const AI_REQUIRED_QUIZ_IDS: SessionQuizId[] = [
 export const MIN_MUTUAL_FOR_AI = 3;
 
 export const AI_INELIGIBLE_MSG =
-  "数据不足以支持AI分析，请确保每一种测试，都有测试记录，并且每种测试至少有3位朋友完成互测。";
+  "数据不足以支持AI分析，请至少完成任意一项自测，并有3位朋友完成该项目的互测。";
 
 export interface AiEligibilityMissingItem {
   quizId: string;

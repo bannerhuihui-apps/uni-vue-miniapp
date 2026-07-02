@@ -6,6 +6,7 @@
  * - 生产：zhiwojifen.sewdoc.com
  */
 // export const MINIGAME_API_BASE_URL = "https://game.jyiai.com/api/minigame";
- export const MINIGAME_API_BASE_URL = "https://zhiwojifen.sewdoc.com/api/minigame";
+// export const MINIGAME_API_BASE_URL = "https://zhiwojifen.sewdoc.com/api/minigame";
+ export const MINIGAME_API_BASE_URL = "https://zhiwojifen.zhidezhipin.com/api/minigame";
 
 export const MINIGAME_API_SOURCE = "minigame";

@@ -7,7 +7,12 @@ import {
   buildRecordResultPresentation,
   type RecordResultPresentation,
 } from "@/utils/minigame/record-result-display";
-import type { DimRowVm, MutualSummaryVm, PillCellVm, QuadCellVm } from "@/utils/minigame/mutual-aggregate";
+import type {
+  DimRowVm,
+  MutualSummaryVm,
+  PillCellVm,
+  QuadCellVm,
+} from "@/utils/minigame/mutual-summary-types";
 
 type ScoredQuizId = Exclude<SessionQuizId, "mbti">;
 

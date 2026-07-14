@@ -4,27 +4,27 @@
 import MBTI_LIST from "@/data/mbti-types";
 import type { SessionQuizId } from "@/state/minigame-app";
 import { buildMbtiType } from "@/utils/minigame/mbti";
+import { getRecordMbtiType } from "@/utils/minigame/record-mbti-type";
 import { buildScoredSummaryFields } from "@/utils/minigame/mutual-scored-aggregate";
+import type {
+  DimRowVm,
+  MutualSummaryVm,
+  PillCellVm,
+  QuadCellVm,
+} from "@/utils/minigame/mutual-summary-types";
+
+export { getRecordMbtiType } from "@/utils/minigame/record-mbti-type";
+export type {
+  DimRowVm,
+  MutualSummaryVm,
+  PillCellVm,
+  QuadCellVm,
+} from "@/utils/minigame/mutual-summary-types";
 
 const LETTER_KEYS = ["E", "I", "S", "N", "T", "F", "J", "P"] as const;
 
 function emptyLetterTotals(): Record<string, number> {
   return { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
-}
-
-export function getRecordMbtiType(rec: unknown): string {
-  if (!rec || typeof rec !== "object") return "";
-  const r = rec as { result?: { type?: string }; answers?: string[] };
-  const raw = (r.result && r.result.type) || "";
-  const t = String(raw).trim().toUpperCase();
-  if (t && /^[IE][SN][TF][JP]$/.test(t)) return t;
-  const answers = r.answers;
-  if (Array.isArray(answers) && answers.length) {
-    const computed = buildMbtiType(answers);
-    const ct = (computed && computed.type) || "";
-    if (ct && /^[IE][SN][TF][JP]$/.test(ct)) return ct;
-  }
-  return "";
 }
 
 function addCountsMapToTotals(cm: unknown, totals: Record<string, number>): number {
@@ -134,15 +134,6 @@ export function buildAggregateCounts(list: unknown[]): {
   }));
 }
 
-export interface DimRowVm {
-  leftLabel: string;
-  rightLabel: string;
-  leftPercent: number;
-  rightPercent: number;
-  splitHeavy: "even" | "left" | "right";
-  grad: string;
-}
-
 export function buildDimRows(list: unknown[]): DimRowVm[] {
   const rows: [string, string, string, string, [string, string]][] = [
     ["I内向", "I", "E外向", "E", ["#d8243f", "#3d62b6"]],
@@ -172,21 +163,6 @@ export function buildDimRows(list: unknown[]): DimRowVm[] {
       grad: `linear-gradient(90deg, ${c0}, ${c1})`,
     };
   });
-}
-
-export interface PillCellVm {
-  leftLabel: string;
-  leftCount: number;
-  rightLabel: string;
-  rightCount: number;
-  pillTone: string;
-}
-
-/** 趣味测评 2×2 四象格 */
-export interface QuadCellVm {
-  label: string;
-  count: number;
-  pillTone: string;
 }
 
 /** 固定 4 枚胶囊 2×2 */
@@ -224,28 +200,6 @@ function getTypeMeta(composite: string): MbtiRich | null {
     if (arr[i]?.type === composite) return arr[i];
   }
   return null;
-}
-
-export interface MutualSummaryVm {
-  quizId: SessionQuizId;
-  isScoredQuiz: boolean;
-  /** 趣味测评汇总主标题（档位名） */
-  scoredHeadline: string;
-  hasSummaryData: boolean;
-  composite: string;
-  compositeParts: { text: string; disputed: boolean }[];
-  showTfControversyHint: boolean;
-  aliasTop: string;
-  topTypesText: string;
-  showTopTypes: boolean;
-  pillRows: ReturnType<typeof buildAggregateCounts>;
-  pillPairs: PillCellVm[][];
-  quadGrid: QuadCellVm[][];
-  dimRows: DimRowVm[];
-  totalFriends: number;
-  /** 四象区块标题（MBTI / 趣味测评文案不同） */
-  quadBlockTitle: string;
-  quadBlockSub: string;
 }
 
 function emptyMbtiSummary(): MutualSummaryVm {

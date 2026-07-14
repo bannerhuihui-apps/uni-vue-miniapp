@@ -321,6 +321,4 @@ function onBack() {
 }
 </script>
 
-<style lang="scss" scoped>
-@import "./detail-zhiwo.scss";
-</style>
+<style lang="scss" scoped src="./detail-zhiwo.scss"></style>

@@ -56,13 +56,12 @@ onHide(() => {
 @use "@/styles/zhiwo-theme.scss";
 
 /**
- * H5：@font-face；URL 与 src/constants/zhiwo-font.ts 中 Remote 一致；
- * 若跨域失败，可把 qingning-rounded.ttf 放到 static/fonts/ 再改为本地路径。
+ * H5：@font-face；与 src/constants/zhiwo-font.ts Remote 保持一致。
  */
 /* #ifdef H5 */
 @font-face {
   font-family: "QingningRounded";
-  src: url("https://game.jyiai.com/static/fonts/qingning-rounded.ttf")
+  src: url("https://zhiwojifen.zhidezhipin.com/img/fonts/qingning-rounded.ttf")
     format("truetype");
   font-weight: normal;
   font-style: normal;

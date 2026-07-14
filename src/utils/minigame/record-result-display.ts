@@ -5,7 +5,7 @@ import { buildCrushResultPresentation } from "@/data/quiz-crush-result-tiers";
 import { buildDarknessResultPresentation } from "@/data/quiz-darkness-result-tiers";
 import { buildPeachResultPresentation } from "@/data/quiz-peach-result-tiers";
 import type { SessionQuizId } from "@/state/minigame-app";
-import { getRecordMbtiType } from "@/utils/minigame/mutual-aggregate";
+import { getRecordMbtiType } from "@/utils/minigame/record-mbti-type";
 import { resolveRecordQuizId } from "@/utils/minigame/quiz-id";
 
 export interface RecordResultPresentation {

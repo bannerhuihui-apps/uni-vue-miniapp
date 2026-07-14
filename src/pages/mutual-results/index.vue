@@ -381,6 +381,4 @@ function onHome() {
 }
 </script>
 
-<style lang="scss" scoped>
-@import "./mutual-results-zhiwo.scss";
-</style>
+<style lang="scss" scoped src="./mutual-results-zhiwo.scss"></style>

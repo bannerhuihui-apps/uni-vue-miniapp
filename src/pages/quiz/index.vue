@@ -11,19 +11,22 @@
       <!-- 主内容滚动；「上一题」单独固底，避免题干/提示高度变化带动按钮位移 -->
       <scroll-view scroll-y class="quiz-scroll-main" enhanced :show-scrollbar="false">
         <view class="content" :class="{ 'content--quiz-four': isScoredFourChoice }">
-          <view class="mode-ad-card tap" @tap="openQrModal">
-            <swiper
-              class="mode-ad-swiper"
-              autoplay
-              circular
-              :interval="3500"
-              :duration="500"
-              :indicator-dots="false"
-            >
-              <swiper-item><image class="mode-ad-slide-img" :src="IMG_QUIZ_AD_01" mode="aspectFill" /></swiper-item>
-              <swiper-item><image class="mode-ad-slide-img" :src="IMG_QUIZ_AD_02" mode="aspectFill" /></swiper-item>
-            </swiper>
+          <!-- #ifdef MP-WEIXIN -->
+          <view
+            v-if="showQuizNativeAd"
+            class="mode-ad-card mode-ad-card--native"
+            :class="{ 'mode-ad-card--ready': quizNativeAdReady }"
+            :style="{ minHeight: quizNativeAdReserveStyle }"
+          >
+            <ad-custom
+              class="mode-native-ad"
+              :class="{ 'mode-native-ad--ready': quizNativeAdReady }"
+              :unit-id="QUIZ_NATIVE_AD_UNIT_ID"
+              @load="onQuizNativeAdLoad"
+              @error="onQuizNativeAdError"
+            />
           </view>
+          <!-- #endif -->
 
           <view class="pill-track">
             <view class="pill-fill" :class="{ 'pill-fill--full': pct >= 100 }" :style="{ width: pct + '%' }"></view>
@@ -57,31 +60,14 @@
         <view class="prev tap" :class="{ 'prev--disabled': qIndex <= 0 }" @tap="prev">上一题</view>
       </view>
     </view>
-
-    <view v-if="qrModalVisible" class="qr-modal" @tap.stop="">
-      <view class="qr-modal__mask tap" @tap="closeQrModal"></view>
-      <view class="qr-modal__panel tap" @tap.stop="">
-        <image
-          class="qr-modal__img"
-          :src="IMG_QR_OTHER"
-          mode="aspectFit"
-          :show-menu-by-longpress="true"
-        />
-        <text class="qr-modal__tip">长按识别二维码，进入ADE+文创商城</text>
-      </view>
-    </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
-import {
-  IMG_QR_OTHER,
-  IMG_QUESTION_BG,
-  IMG_QUIZ_AD_01,
-  IMG_QUIZ_AD_02,
-} from "@/config/static-images";
+import { IMG_QUESTION_BG } from "@/config/static-images";
+import { QUIZ_NATIVE_AD_RESERVE_RPX, QUIZ_NATIVE_AD_UNIT_ID } from "@/config/ads";
 import ZhiwoNavBar from "@/components/ZhiwoNavBar.vue";
 import { darknessTrendQuestions } from "@/data/quiz-darkness-trend";
 import { peachBlossomQuestions } from "@/data/quiz-peach-blossom";
@@ -136,8 +122,9 @@ const EMPTY_LINE: LineUi = {
 
 const qIndex = ref(0);
 const quizMode = ref<"self" | "mutual">("self");
-const qrModalVisible = ref(false);
 const quizReady = ref(false);
+const quizNativeAdVisible = ref(!!QUIZ_NATIVE_AD_UNIT_ID);
+const quizNativeAdReady = ref(false);
 const navTitle = ref("性格测试");
 
 const inviteIdBridge = ref("");
@@ -284,13 +271,20 @@ const line = computed((): LineUi => {
 const progressCurrent = computed(() => line.value.progressCurrent);
 const progressTotal = computed(() => line.value.progressTotal);
 const pct = computed(() => line.value.pct);
+const showQuizNativeAd = computed(() => !!QUIZ_NATIVE_AD_UNIT_ID && quizNativeAdVisible.value);
+const quizNativeAdReserveStyle = `${QUIZ_NATIVE_AD_RESERVE_RPX}rpx`;
 
-function openQrModal() {
-  qrModalVisible.value = true;
+function onQuizNativeAdLoad() {
+  quizNativeAdVisible.value = true;
+  quizNativeAdReady.value = true;
 }
 
-function closeQrModal() {
-  qrModalVisible.value = false;
+function onQuizNativeAdError(e: unknown) {
+  quizNativeAdVisible.value = false;
+  quizNativeAdReady.value = false;
+  if (import.meta.env.DEV) {
+    console.warn("[quiz] native ad load failed", e);
+  }
 }
 
 function choose(optionIndex: number) {
@@ -473,29 +467,32 @@ function prev() {
   }
 }
 
-.mode-ad-card {
+.mode-ad-card--native {
+  /* 先占位、再填充；不可用 max-height 裁切广告 */
   margin-top: 8rpx;
-  border-radius: 36rpx;
-  border: 2rpx solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 20rpx 36rpx rgba(0, 0, 0, 0.14);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  border-radius: 24rpx;
   overflow: hidden;
   box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.42);
+  transition: background-color 180ms ease;
 }
 
-.mode-ad-card.tap:active {
-  opacity: 0.92;
+.mode-ad-card--native.mode-ad-card--ready {
+  background: transparent;
 }
 
-.mode-ad-swiper {
-  width: 100%;
-  height: 200rpx;
-}
-
-.mode-ad-slide-img {
+.mode-native-ad {
   display: block;
   width: 100%;
-  height: 100%;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.mode-native-ad--ready {
+  opacity: 1;
 }
 
 .pill-track {
@@ -646,56 +643,6 @@ function prev() {
 .prev--disabled {
   opacity: 0.35;
   pointer-events: none;
-}
-
-.qr-modal {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-}
-
-.qr-modal__mask {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.48);
-}
-
-.qr-modal__panel {
-  position: relative;
-  z-index: 1;
-  width: 580rpx;
-  max-width: calc(100vw - 80rpx);
-  padding: 32rpx 32rpx 36rpx;
-  background: rgba(255, 255, 255, 0.98);
-  border-radius: 32rpx;
-  border: 2rpx solid rgba(255, 255, 255, 0.95);
-  box-shadow: 0 24rpx 48rpx rgba(0, 0, 0, 0.2);
-  box-sizing: border-box;
-}
-
-.qr-modal__img {
-  display: block;
-  width: 400rpx;
-  height: 400rpx;
-  margin: 0 auto 28rpx;
-}
-
-.qr-modal__tip {
-  display: block;
-  font-size: 30rpx;
-  line-height: 1.55;
-  color: rgba(0, 0, 0, 0.62);
-  text-align: center;
 }
 
 .tap:active {
